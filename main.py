@@ -10,6 +10,8 @@ import pygame
 p = Path(__file__).parent  # 檔案位置
 img_dir = p.joinpath("images")  # 圖片資料夾
 
+INVINCIBLE_MODE = True  # 無敵模式
+
 pygame.init()  # 初始化
 
 WIDTH = 800  # 視窗寬度
@@ -237,7 +239,8 @@ if __name__ == "__main__":
             )  # 圓形碰撞處理
             if hits:
                 if player.hp > 0:
-                    player.hp -= 20
+                    if not INVINCIBLE_MODE:
+                        player.hp -= 20
                     for e in hits:
                         e.kill()
                         enemy = Enemy()
