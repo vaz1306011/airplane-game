@@ -10,12 +10,14 @@ import pygame
 p = Path(__file__).parent  # 檔案位置
 img_dir = p.joinpath("images")  # 圖片資料夾
 
-INVINCIBLE_MODE = True  # 無敵模式
+INVINCIBLE_MODE = False  # 無敵模式
 
 pygame.init()  # 初始化
 
-WIDTH = 800  # 視窗寬度
-HEIGHT = 600  # 視窗高度
+# WIDTH = 800  # 視窗寬度
+# HEIGHT = 600  # 視窗高度
+WIDTH = 1280  # 視窗寬度
+HEIGHT = 720  # 視窗高度
 BAR_LENGTH = 150  # 生命值長度
 BAR_HEIGHT = 20  # 生命值高度
 
@@ -46,6 +48,8 @@ background.set_alpha(225)
 player_image = pygame.image.load(img_dir.joinpath("airplane.png")).convert_alpha()
 bullet_image = pygame.image.load(img_dir.joinpath("bullet.png")).convert_alpha()
 enemy_image = pygame.image.load(img_dir.joinpath("enemy.png")).convert_alpha()
+
+add_enemy_intrerval = 5
 
 
 class Player(pygame.sprite.Sprite):
@@ -176,6 +180,12 @@ def draw_hp_bar(hp, screen, x, y):
     pygame.draw.rect(screen, WHITE, outline_rect, 2)  # 外框
 
 
+def add_enemy():
+    e = Enemy()  # 生成敵人位置
+    all_sprites.add(e)  # e加入所有物件群組
+    enemies.add(e)  # e加入所有敵人群組
+
+
 if __name__ == "__main__":
 
     all_sprites = pygame.sprite.Group()  # 所有物件群組
@@ -187,9 +197,9 @@ if __name__ == "__main__":
 
     enemies_num = 5  # 敵人數量
     for i in range(enemies_num):  # 生成五個敵人
-        enemy = Enemy()
-        all_sprites.add(enemy)  # 敵人加入所有物件群組
-        enemies.add(enemy)  # 敵人加入所有敵人群組
+        add_enemy()
+
+    next_add_enemy_time = pygame.time.get_ticks() + add_enemy_intrerval
 
     # 子彈發射間隔
     bullets_timer = pygame.USEREVENT
@@ -223,15 +233,20 @@ if __name__ == "__main__":
                 if e.next_speed_time < pygame.time.get_ticks():
                     e.random_speed()
 
+            # 增加敵人
+            if pygame.time.get_ticks() > next_add_enemy_time:
+                next_add_enemy_time = (
+                    pygame.time.get_ticks() + add_enemy_intrerval * 1000
+                )
+                add_enemy()
+
             all_sprites.update()  # 每執行一次所有物件群組更新
 
             # 生成新的敵人
             hits = pygame.sprite.groupcollide(bullets, enemies, True, True)
             for hit in hits:
                 score += 1  # 每次擊中家+1分
-                e = Enemy()  # 生成敵人位置
-                all_sprites.add(e)  # e加入所有物件群組
-                enemies.add(e)  # e加入所有敵人群組
+                add_enemy()
 
             # 碰撞理處
             hits = pygame.sprite.spritecollide(
@@ -243,9 +258,7 @@ if __name__ == "__main__":
                         player.hp -= 20
                     for e in hits:
                         e.kill()
-                        enemy = Enemy()
-                        all_sprites.add(enemy)  # 敵人加入所有物件群組
-                        enemies.add(enemy)  # 敵人加入所有敵人群組
+                        add_enemy()
 
                 if player.hp <= 0:
                     text = font.render("Game Over", True, (WHITE))  # 遊戲結束的字幕
