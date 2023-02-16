@@ -44,10 +44,10 @@ background.set_alpha(225)
 # background.fill((0,0,0))    #黑色
 
 
-# 設定遊玩圖片
-player_image = pygame.image.load(img_dir.joinpath("airplane.png")).convert_alpha()
-bullet_image = pygame.image.load(img_dir.joinpath("bullet.png")).convert_alpha()
-enemy_image = pygame.image.load(img_dir.joinpath("enemy.png")).convert_alpha()
+# 讀取貼圖
+player_sprite = pygame.image.load(img_dir.joinpath("airplane.png")).convert_alpha()
+bullet_sprite = pygame.image.load(img_dir.joinpath("bullet.png")).convert_alpha()
+enemy_sprite = pygame.image.load(img_dir.joinpath("enemy.png")).convert_alpha()
 
 add_enemy_intrerval = 5
 
@@ -59,8 +59,8 @@ class Player(pygame.sprite.Sprite):
 
     def __init__(self):
         super().__init__()  # pygame物件繼承init
-        self.image = pygame.transform.scale(player_image, (80, 80))  # 飛機圖片大小
-        self.rect = self.image.get_rect()  # 玩家碰撞範圍
+        self.sprite = pygame.transform.scale(player_sprite, (80, 80))  # 飛機圖片大小
+        self.rect = self.sprite.get_rect()  # 玩家碰撞範圍
         self.radius = 35  # 判定玩家範圍半徑
 
         # 飛機初始位置
@@ -100,9 +100,9 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self, x=None, y=None, speedx=None, speedy=None):  # 敵人初始座標速度
         super().__init__()  # pygame物件繼承init
         self.next_speed_time = 0  # 下一次速度更新時間
-        self.image = pygame.transform.scale(enemy_image, (80, 80))  # 敵人圖片大小
-        self.image = pygame.transform.rotate(self.image, 180)  # 敵人旋轉180度
-        self.rect = self.image.get_rect()  # 敵人碰撞範圍
+        self.sprite = pygame.transform.scale(enemy_sprite, (80, 80))  # 敵人圖片大小
+        self.sprite = pygame.transform.rotate(self.sprite, 180)  # 敵人旋轉180度
+        self.rect = self.sprite.get_rect()  # 敵人碰撞範圍
         self.radius = self.rect.width * 0.85 / 2  # 判定敵人範圍半徑
 
         # 亂數生成敵人位置
@@ -142,8 +142,8 @@ class Bullet(pygame.sprite.Sprite):
 
     def __init__(self, x, y):  # 子彈初始射出位置
         super().__init__()  # pygame物件init
-        self.image = pygame.transform.scale(bullet_image, (25, 50))  # 子彈圖片大小
-        self.rect = self.image.get_rect()  # 子彈碰撞範圍
+        self.sprite = pygame.transform.scale(bullet_sprite, (25, 50))  # 子彈圖片大小
+        self.rect = self.sprite.get_rect()  # 子彈碰撞範圍
         self.rect.bottom = y
         self.rect.centerx = x
         self.speedy = -10  # 子彈y軸速度
