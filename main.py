@@ -23,6 +23,7 @@ BAR_HEIGHT = 20  # 生命值高度
 
 WHITE = pygame.Color("white")
 GREEN = pygame.Color("green")
+RED = pygame.Color("red")
 BLACK = pygame.Color("black")
 
 size = WIDTH, HEIGHT  # 視窗大小
@@ -59,7 +60,8 @@ class Player(pygame.sprite.Sprite):
 
     def __init__(self):
         super().__init__()  # pygame物件繼承init
-        self.sprite = pygame.transform.scale(player_sprite, (80, 80))  # 飛機圖片大小
+        self.image = pygame.transform.scale(player_sprite, (80, 80))  # 飛機圖片大小
+        self.sprite = self.image
         self.rect = self.sprite.get_rect()  # 玩家碰撞範圍
         self.radius = 35  # 判定玩家範圍半徑
 
@@ -102,6 +104,7 @@ class Enemy(pygame.sprite.Sprite):
         self.next_speed_time = 0  # 下一次速度更新時間
         self.sprite = pygame.transform.scale(enemy_sprite, (80, 80))  # 敵人圖片大小
         self.sprite = pygame.transform.rotate(self.sprite, 180)  # 敵人旋轉180度
+        self.image = self.sprite
         self.rect = self.sprite.get_rect()  # 敵人碰撞範圍
         self.radius = self.rect.width * 0.85 / 2  # 判定敵人範圍半徑
 
@@ -143,6 +146,7 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):  # 子彈初始射出位置
         super().__init__()  # pygame物件init
         self.sprite = pygame.transform.scale(bullet_sprite, (25, 50))  # 子彈圖片大小
+        self.image = self.sprite
         self.rect = self.sprite.get_rect()  # 子彈碰撞範圍
         self.rect.bottom = y
         self.rect.centerx = x
@@ -176,7 +180,7 @@ def draw_hp_bar(hp, screen, x, y):
     un_hp_rect = pygame.Rect(x + width, y, BAR_LENGTH - width, BAR_HEIGHT)
 
     pygame.draw.rect(screen, BLACK, un_hp_rect)
-    pygame.draw.rect(screen, GREEN, hp_rect)  # 血量
+    pygame.draw.rect(screen, RED, hp_rect)  # 血量
     pygame.draw.rect(screen, WHITE, outline_rect, 2)  # 外框
 
 
@@ -187,7 +191,6 @@ def add_enemy():
 
 
 if __name__ == "__main__":
-
     all_sprites = pygame.sprite.Group()  # 所有物件群組
     player = Player()  # 玩家
     all_sprites.add(player)  # 玩家群組加入所有物件群組
